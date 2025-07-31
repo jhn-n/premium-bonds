@@ -5,6 +5,7 @@ class Prize {
     this.number = number;
   }
 }
+
 const nsi = {};
 nsi.month = "August 2025";
 nsi.prizes = [
@@ -122,6 +123,7 @@ function medianWinnings(pd) {
   console.log(`Median winnings over period is £${median}`)
 }
 
+// use binary exponentiation
 function makePDPeriod(pdm) {
   let t = user.period;
   let ans = new Map([[0, 1]]);
