@@ -1,13 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Premium Bonds</title>
     <link rel="stylesheet" href="style.css">
+    <script src="data.js" defer></script>
+    <script src="calcs.js" defer></script>
+    <script src="dom.js" defer></script>
     <script src="script.js" defer></script>
+
 </head>
+
 <body>
-    
+    <div class="inputs">
+        <label for="holding">Number of bonds owned (25 - 50,000):</label>
+        <input type="number" id="holding" min="25" max="50000" placeholder="25"/>
+        <button id="calculate">Calculate</button>
+    </div>
+    <div id="statement">Calculating...
+    </div>
+    <div id="table-container">
+    </div>
 </body>
+
 </html>
