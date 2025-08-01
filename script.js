@@ -15,9 +15,6 @@ function generateTable() {
         requestAnimationFrame(() => {
           const j = nextPD.next().value;
           addDistColumn(j + 1, pds[j]);
-          if (n > 1) {
-            console.timeLog("pds");
-          }
           liveDistUpdates(n - 1);
         });
       });
