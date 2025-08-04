@@ -1,5 +1,5 @@
 // discard prize combinations with immaterial probabilities
-const materialityThreshold = 1e-18;
+const materialityThreshold = 1e-15;
 
 // options to increase calculation speed vs very small impact on big win probabilities
 // 0 - no cap, use full distribution (subject to materialityThreshold)
@@ -19,26 +19,6 @@ const bracketCap = (function () {
       return (a) => (a < cap2 ? a : a < cap1 ? cap2 : cap1);
   }
 })();
-
-function output(pd) {
-  const strings = [
-    `\nAnalysis based on prize breakdown for ${nsi.month}`,
-    `${pd.size} material prize totals found`,
-    `Total probability = ${sumValues(pd)}\n`,
-    `£0 exactly => ${percent(pd.get(0), 1)}`,
-  ];
-  for (const b of user.brackets) {
-    const p = pd.entries().reduce((p, e) => (e[0] >= b ? p + e[1] : p), 0);
-    strings.push(
-      p >= 0.01
-        ? `At least £${b} => ${percent(p, 1)}`
-        : `At least £${b} => 1 in ${Math.floor(1 / p)}`
-    );
-  }
-  for (const s of strings) {
-    console.log(s);
-  }
-}
 
 function summaryStats() {
   const expMonthlyInt = expMonthlyInterest();
@@ -181,6 +161,7 @@ function tailPCache() {
     return tailP;
   };
 }
+
 function calculateTailP(prizesWon) {
   const userRemBonds = user.bonds - prizesWon;
   const nsiRemBonds = nsi.bonds - prizesWon;
@@ -191,27 +172,4 @@ function calculateTailP(prizesWon) {
   return p;
 }
 
-function makeBracketCap(type) {
-  const cap1 = user.brackets.at(-1);
-  const cap2 = user.brackets.at(-2);
-  switch (type) {
-    case 0:
-      return (a) => a;
-    case 1:
-      return (a) => (a <= cap1 ? a : cap1);
-    case 2:
-      return (a) => (a <= cap2 ? a : a <= cap1 ? cap2 : cap1);
-  }
-}
 
-function sumValues(m) {
-  return m.values().reduce((acc, p) => acc + p, 0);
-}
-
-function round(x, dp) {
-  return Number.parseFloat(x).toFixed(dp);
-}
-
-function percent(x, dp) {
-  return `${round(100 * x, dp)}%`;
-}

@@ -11,14 +11,18 @@ html {
     font-size: 1.3rem;
 }
 
-button {
+#calculate {
     visibility: hidden;
     background-color: rgba(248, 81, 81, 0.452);
     color: black
 }
 
-button.primed {
+#calculate.primed {
     visibility: visible;
+}
+
+.active {
+  visibility: hidden;
 }
 
 table {

@@ -9,6 +9,7 @@
     <script src="data.js" defer></script>
     <script src="calcs.js" defer></script>
     <script src="dom.js" defer></script>
+    <script src="prob-table.js" defer></script>
     <script src="script.js" defer></script>
 
 </head>
@@ -16,13 +17,44 @@
 <body>
     <div class="inputs">
         <label for="holding">Number of bonds owned (25 - 50,000):</label>
-        <input type="number" id="holding" min="25" max="50000" placeholder="25"/>
+        <input type="number" id="holding" min="25" max="50000" placeholder="1000" />
         <button id="calculate">Calculate</button>
+        <p id="update-text">Based on August 2025 prize draw <button id="update">update</button> </p>
     </div>
+
     <div id="statement">Calculating...
     </div>
+
     <div id="table-container">
     </div>
+
+    <div id="prizedraw">
+        <dialog>
+            <form action="https://httpbin.org/post" method="post" id="new-prizedraw">
+                <div>
+                    <label for="numberPrizes">Total prizes</label>
+                    <input type="number" id="numberPrizes" min="500000" , max="50000000" , required
+                        placeholder="5995712" />
+                </div>
+                <div>
+                    <label for="prizeFund">Total value of prizes</label>
+                    <input type="number" id="prizeFund" min="50000000" max="5000000000" required placeholder="417701175" />
+                </div>
+                <div>
+                    <label for="odds">Odds of winning</label>
+                    <input type="number" id="odds" min="2000" max="200000" required placeholder="22000" />
+                    to 1
+                </div>
+                <div class="buttons">
+                    <button type="submit" id="submitButton">Submit</button>
+                    <button type="button" id="cancelButton">Cancel</button>
+                </div>
+            </form>
+            <div id="prizes-container">
+            </div>
+        </dialog>
+    </div>
+
 </body>
 
 </html>

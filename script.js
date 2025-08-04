@@ -20,7 +20,7 @@ function generateTable() {
       });
     } else {
       console.timeEnd("pds");
-      statementText.innerText = `Chance of winning with a premium bonds holding of £${numberWithCommas(
+      statementText.innerText = `Chance of winning with premium bonds of £${numberWithCommas(
         user.bonds
       )}`;
     }
