@@ -10,16 +10,16 @@
     <script src="calcs.js" defer></script>
     <script src="dom.js" defer></script>
     <script src="prob-table.js" defer></script>
+    <script src="prize-table.js" defer></script>
     <script src="script.js" defer></script>
 
 </head>
 
 <body>
     <div class="inputs">
-        <label for="holding">Number of bonds owned (25 - 50,000):</label>
+        <label for="holding">Number of bonds held (25 - 50,000):</label>
         <input type="number" id="holding" min="25" max="50000" placeholder="1000" />
         <button id="calculate">Calculate</button>
-        <p id="update-text">Based on August 2025 prize draw <button id="update">update</button> </p>
     </div>
 
     <div id="statement">Calculating...
@@ -28,26 +28,44 @@
     <div id="table-container">
     </div>
 
-    <div id="prizedraw">
-        <dialog>
+    <div class="inputs">
+        <span id="update-text">Based on August 2025 prize draw </span>
+        <button id="updateButton">update</button>
+    </div>
+    <div>
+        <dialog id="prizedraw">
             <form action="https://httpbin.org/post" method="post" id="new-prizedraw">
+                <button type="button" id="cancelButton">X</button>
                 <div>
-                    <label for="numberPrizes">Total prizes</label>
-                    <input type="number" id="numberPrizes" min="500000" , max="50000000" , required
-                        placeholder="5995712" />
+                    <label for="odds">
+                        <a href="https://www.nsandi.com/products/premium-bonds" target="_blank">
+                            Odds of winning
+                        </a>
+                    </label>
+                    <span>
+                        <input type="number" id="odds" min="2000" max="200000" required />
+                        <span>to 1</span>
+                    </span>
                 </div>
                 <div>
-                    <label for="prizeFund">Total value of prizes</label>
-                    <input type="number" id="prizeFund" min="50000000" max="5000000000" required placeholder="417701175" />
+                    <label for="numberPrizes">
+                        <a href="https://www.nsandi.com/get-to-know-us/monthly-prize-allocation" target="_blank">
+                            Total prizes
+                        </a>
+                    </label>
+                    <input type="number" id="numberPrizes" min="500000" , max="50000000" , required />
                 </div>
                 <div>
-                    <label for="odds">Odds of winning</label>
-                    <input type="number" id="odds" min="2000" max="200000" required placeholder="22000" />
-                    to 1
+                    <label for="prizeFund">
+                        <a href="https://www.nsandi.com/get-to-know-us/monthly-prize-allocation" target="_blank">
+                            Total value of prizes
+                        </a>
+                    </label>
+                    <input type="number" id="prizeFund" min="50000000" max="5000000000" required/>
                 </div>
-                <div class="buttons">
+                <div>
+                    <span> </span>
                     <button type="submit" id="submitButton">Submit</button>
-                    <button type="button" id="cancelButton">Cancel</button>
                 </div>
             </form>
             <div id="prizes-container">

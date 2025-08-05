@@ -1,3 +1,16 @@
+// USER DATA
+const user = {};
+user.bonds = 1000;
+user.periods = [3, 6, 12, 24, 60];
+user.brackets = [
+  25, 50, 75, 100, 200, 500, 1_000, 
+  2_000, 5_000, 10_000, 25_000, 50_000, 100_000, 1_000_000,
+];
+// user.brackets = [
+//   25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 750, 1000, 1500,
+//   2500, 5000, 10_000, 25_000, 50_000, 100_000, 1_000_000,
+// ];
+
 // PREMIUM BOND DATA
 class Prize {
   constructor(value, number) {
@@ -6,19 +19,10 @@ class Prize {
   }
 }
 
-// USER DATA
-const user = {};
-user.bonds = 1000;
-user.periods = [3, 6, 12, 24, 60];
-user.brackets = [
-  25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 750, 1000, 1500,
-  2500, 5000, 10_000, 25_000, 50_000, 100_000, 1_000_000,
-];
-
-const nsi = setupNSIdata("August 2025", 6_009_717, 396_641_075, 22000);
+let nsi = setupNSIdata(6_009_717, 396_641_075, 22000);
 console.log(nsi);
 
-function setupNSIdata(month, totalPrizes, totalPrizeValue, odds) {
+function setupNSIdata(totalPrizes, totalPrizeValue, odds) {
   const bonds = totalPrizes * odds;
   const noWinBonds = bonds - totalPrizes;
   const monthlyReturn = totalPrizeValue / bonds;
@@ -31,7 +35,7 @@ function setupNSIdata(month, totalPrizes, totalPrizeValue, odds) {
   prizes.push(new Prize(1_000_000, 2));
   const eachHigherFund = (higherFund - 1_000_000 * 2) / 5;
   let remainder = 0;
-  [100_000, 50_000, 25_000, 10_000, 5000].forEach((value) => {
+  [100_000, 50_000, 25_000, 10_000, 5_000].forEach((value) => {
     const availableFund = eachHigherFund + remainder;
     const numPrizes = Math.round(availableFund / value);
     prizes.push(new Prize(value, numPrizes));
@@ -58,13 +62,13 @@ function setupNSIdata(month, totalPrizes, totalPrizeValue, odds) {
   prizes.push(new Prize(25, num25s));
 
   return {
-    month,
+    prizes,
     bonds,
     noWinBonds,
     totalPrizes,
     totalPrizeValue,
+    odds,
     monthlyReturn,
-    prizes,
   };
 
   function remainingPrizeFund() {

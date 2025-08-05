@@ -1,44 +1,56 @@
+
 html {
   font-family: sans-serif;
 }
 
 .inputs {
-    margin: 1rem;
+  margin: 1rem;
 }
 
+.inputs #updateButton {
+  margin-left: 2rem;
+}
 #statement {
-    margin: 1rem;
-    font-size: 1.3rem;
+  margin: 1rem;
+  font-size: 1.3rem;
 }
 
 #calculate {
-    visibility: hidden;
-    background-color: rgba(248, 81, 81, 0.452);
-    color: black
+  visibility: hidden;
+  background-color: rgba(248, 81, 81, 0.452);
 }
 
 #calculate.primed {
-    visibility: visible;
+  visibility: visible;
 }
 
 .active {
   visibility: hidden;
 }
 
+/* #table-container {
+  transition: transform 2s; 
+}
+
+#table-container:hover {
+  transform: rotate(180deg);
+} */
+
 table {
   border-collapse: collapse;
-  border: 2px solid rgb(200,200,200);
+  border: 2px solid rgb(200, 200, 200);
   letter-spacing: 1px;
   font-size: 0.8rem;
 }
 
-td, th {
-  border: 1px solid rgb(190,190,190);
+td,
+th {
+  border: 1px solid rgb(190, 190, 190);
   padding: 10px 20px;
 }
 
 th {
-  background-color: rgb(235,235,235);
+  background-color: rgb(235, 235, 235);
 }
 
 td {
@@ -46,13 +58,49 @@ td {
 }
 
 tr:nth-child(even) td {
-  background-color: rgb(250,250,250);
+  background-color: rgb(250, 250, 250);
 }
 
 tr:nth-child(odd) td {
-  background-color: rgb(245,245,245);
+  background-color: rgb(245, 245, 245);
 }
 
 caption {
   padding: 10px;
+}
+
+
+
+#prizedraw {
+  position: relative;
+}
+
+#prizedraw > form > div {
+  margin: 5px 0px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+#prizedraw > form > div > * {
+  justify-self: start;
+}
+
+#prizedraw span > span {
+  font-size: 0.75rem;
+}
+
+#prizedraw #cancelButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+#prizedraw #submitButton {
+  visibility: hidden;
+  justify-self: start;
+  background-color: rgba(248, 81, 81, 0.452);
+}
+
+#prizedraw #submitButton.primed {
+  visibility: visible;
 }

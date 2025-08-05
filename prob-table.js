@@ -1,6 +1,6 @@
 const tableContainer = document.querySelector("#table-container");
 
-function generateTableTemplate(pdPeriod) {
+function generateTableTemplate() {
   tableContainer.innerHTML = "";
   let numDists = 1 + user.periods.length;
   const tbl = document.createElement("table");
@@ -73,10 +73,13 @@ function generateRowHeader(row) {
 function generateColumnHeader(column) {
   switch (column) {
     case 0:
-      return "WINNING PROBABILITIES";
+      return "Prizes";
     case 1:
       return "1 month";
     default:
+      const months = user.periods[column - 2];
+      if (months === 12) return `1 year`;
+      if (months % 12 === 0) return `${months/12} years`; 
       return `${user.periods[column - 2]} months`;
   }
 }
