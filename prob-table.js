@@ -1,5 +1,31 @@
 const tableContainer = document.querySelector("#table-container");
 
+function generateTable() {
+  generateTableTemplate();
+  const numPDs = 1 + user.periods.length;
+  const pds = [...Array(numPDs)];
+  const nextPD = makePDs(pds);
+
+  console.time("pds");
+  liveDistUpdates(numPDs);
+
+  function liveDistUpdates(n) {
+    if (n > 0) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const j = nextPD.next().value;
+          addDistColumn(j + 1, pds[j]);
+          liveDistUpdates(n - 1);
+        });
+      });
+    } else {
+      console.timeEnd("pds");
+      const holding = numberWithCommas(user.bonds);
+      statementText.innerText = `Outcomes with holding of £${holding}`;
+    }
+  }
+}
+
 function generateTableTemplate() {
   tableContainer.innerHTML = "";
   let numDists = 1 + user.periods.length;
@@ -79,7 +105,7 @@ function generateColumnHeader(column) {
     default:
       const months = user.periods[column - 2];
       if (months === 12) return `1 year`;
-      if (months % 12 === 0) return `${months/12} years`; 
+      if (months % 12 === 0) return `${months / 12} years`;
       return `${user.periods[column - 2]} months`;
   }
 }

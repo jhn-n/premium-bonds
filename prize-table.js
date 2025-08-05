@@ -1,6 +1,6 @@
 const prizesContainer = document.querySelector("#prizes-container");
 
-function generatePrizedrawTable() {
+function makePrizedrawTableTemplate() {
   prizesContainer.innerHTML = "";
   const tbl = document.createElement("table");
 
@@ -41,7 +41,7 @@ function generatePrizedrawTable() {
   prizesContainer.appendChild(tbl);
 }
 
-function addPrizesColumn(nsTemp) {
+function addColumnPrizedrawTable(nsTemp) {
   const len = nsi.prizes.length;
   for (let i = 1; i <= len; i++) {
     addPrizeData(i, numberWithCommas(nsTemp.prizes[i - 1].number));
@@ -52,7 +52,7 @@ function addPrizesColumn(nsTemp) {
   addPrizeData(len + 5, `${numberWithCommas(nsTemp.bonds)}`);
 }
 
-function clearPrizesColumn() {
+function clearColumnPrizedrawTable() {
   for (let i = 1; i <= nsi.prizes.length + 5; i++) {
     addPrizeData(i, "");
   }
