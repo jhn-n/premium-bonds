@@ -1,10 +1,14 @@
-// discard prize combinations with immaterial probabilities
+// need to discard prize combinations with immaterial probabilities
+// 1e-15 appears to be past the level where no further impact is observed
 const materialityThreshold = 1e-15;
 
-// options to increase calculation speed vs very small impact on big win probabilities
+// options to increase calculation speed by restricting big win bands
 // 0 - no cap, use full distribution (subject to materialityThreshold)
-// 1 - as 0 but lump any winnings over £1m together (safe if ">£1m" is top bracket)
-// 2 - as 1 but also lump £100k to £1m together (assumes cannot enter £1m bracket without £1m prize!)
+//     DO NOT USE EXCEPT IN TESTING
+// 1 - as 0 but lump any winnings over £1m together (safe if "at least £1m" is top bracket)
+// 2 - as 1 but also lump any £100k <= x < £1m together at £100k. Use this if:
+//     a) we have no use for any intermediate bands between £100k and £1m AND
+//     b) probability of reaching £1m bracket without £1m prize is immaterial
 const bracketCapType = 2;
 
 const bracketCap = (function () {
@@ -20,94 +24,77 @@ const bracketCap = (function () {
   }
 })();
 
-function summaryStats() {
-  const expMonthlyInt = expMonthlyInterest();
-  const expAnnualInt = (1 + expMonthlyInt) ** 12 - 1;
-  const expPeriodInt = (1 + expMonthlyInt) ** user.period - 1;
-  const expPeriodReturn = expPeriodInt * user.bonds;
+class CDF {
+  constructor(pmf) {
+    this.cdf = new Map();
+    this.cdf.set(0, pmf.get(0) ?? 0);
+    const topPrize = user.brackets.at(-1);
+    const secPrize = user.brackets.at(-2);
 
-  console.log(
-    `Expected reinvested winnings of £${Math.floor(expPeriodReturn)}`
-  );
-  console.log(`with annual interest of ${percent(expAnnualInt, 2)}`);
-}
-
-function expMonthlyInterest() {
-  return nsi.prizes.reduce((a, p) => p.value * p.number + a, 0) / nsi.bonds;
-}
-
-function medianWinnings(pd) {
-  let value = 0;
-  let pLast = 0;
-  let p = pd.get(value) ?? 0;
-  if (p >= 0.5) return 0;
-
-  while (p < 0.5) {
-    pLast = p;
-    value += 25;
-    p += pd.get(value) ?? 0;
-  }
-  const median = Math.abs(p - 0.5) < Math.abs(pLast - 0.5) ? value : value - 25;
-  console.log(`Median winnings over period is £${median}`);
-}
-
-function* makePDs(pds) {
-  pds[0] = makePDMonth();
-  yield 0;
-
-  const t = [0, ...user.periods];
-  for (let i = 1; i < t.length; i++) {
-    pds[i] = new Map([[0, 1]]);
-  }
-  let pdExp = pds[0];
-
-  while (t.some((e) => e !== 0)) {
-    for (let i = 1; i < t.length; i++) {
-      if (t[i] === 0) continue;
-      if ((t[i] & 1) !== 0) pds[i] = combine(pds[i], pdExp);
-      t[i] >>= 1;
-      if (t[i] === 0) yield i;
+    switch (bracketCapType) {
+      case 0:
+        const highestKey = Math.max(...pmf.keys());
+        for (let v = 25; v <= highestKey; v += 25) {
+          this.cdf.set(v, this.F(v - 25) + (pmf.get(v) ?? 0));
+        }
+        break;
+      case 1:
+        for (let v = 25; v <= topPrize; v += 25) {
+          this.cdf.set(v, this.F(v - 25) + (pmf.get(v) ?? 0));
+        }
+        break;
+      case 2:
+        for (let v = 25; v <= secPrize; v += 25) {
+          this.cdf.set(v, this.F(v - 25) + (pmf.get(v) ?? 0));
+        }
+        this.cdf.set(topPrize, this.F(secPrize) + (pmf.get(topPrize) ?? 0));
+        break;
     }
-    pdExp = combineSelf(pdExp);
   }
-}
 
-function combine(pdA, pdB) {
-  const pdC = new Map([[0, 0]]);
-  for (const [prizeA, probA] of pdA.entries()) {
-    for (const [prizeB, probB] of pdB.entries()) {
-      const probC = probA * probB;
-      if (probC > materialityThreshold) {
-        const prizeC = bracketCap(prizeA + prizeB);
-        pdC.set(prizeC, (pdC.get(prizeC) || 0) + probC);
+  F(x) {
+    return this.cdf.get(x) ?? NaN;
+  }
+
+  probAtLeast(x) {
+    if (x === 0) return 1;
+    if (bracketCapType === 2 && x === user.brackets.at(-1)) {
+      return 1 - (this.F(user.brackets.at(-2)) ?? 0);
+    }
+    return 1 - (this.F(x - 25) ?? 0);
+  }
+
+  getPercentile(percentile) {
+    const percentage = percentile / 100;
+    if (this.cdf.get(0) >= percentage) return 0;
+
+    const bracketCap = user.brackets.at(-2);
+    if (this.cdf.get(bracketCap) < percentage) {
+      console.error("Using too high percentiles for banding type 2");
+    }
+
+    // binary search for lowest x with F(x) >= target
+    // this is where the percentile lies (represented by high)
+    let low = 0;
+    let high = bracketCap;
+    while (high - low > 25) {
+      const mid = 25 * Math.round((high + low) / 50);
+      if (this.cdf.get(mid) >= percentage) {
+        high = mid;
+      } else {
+        low = mid;
       }
     }
+    return high;
   }
-  return pdC;
-}
-
-function combineSelf(pdA) {
-  const pdC = new Map();
-  for (const [prizeA, probA] of pdA.entries()) {
-    for (const [prizeB, probB] of pdA.entries()) {
-      if (prizeA < prizeB) continue;
-      const probC = probA * probB;
-      if (probC > materialityThreshold) {
-        const prizeC = bracketCap(prizeA + prizeB);
-        const factor = prizeA === prizeB ? 1 : 2;
-        pdC.set(prizeC, (pdC.get(prizeC) || 0) + factor * probC);
-      }
-    }
-  }
-  return pdC;
 }
 
 // returns full probability distribution for a holding of n over one month
-function makePDMonth() {
-  const pdm = new Map();
-  const getTailP = tailPCache();
+function makeMonthPMF() {
+  const pmf = new Map();
+  const tailCache = new Map();
   buildPDRecur(0, 0, 0, 1);
-  return pdm;
+  return pmf;
 
   // build up distribution by recursively considering each prize category in turn
   function buildPDRecur(
@@ -118,11 +105,11 @@ function makePDMonth() {
   ) {
     // terminating condition - no more prizes to win so add tail probability
     if (prizeTypeIndex === nsi.prizes.length) {
-      const tailP = getTailP(prizesWonSoFar);
+      const tailP = lookupTailP(prizesWonSoFar);
       const newCumulP = cumulP * tailP;
       if (newCumulP > materialityThreshold) {
         const bracket = bracketCap(prizeTotalWonSoFar);
-        pdm.set(bracket, (pdm.get(bracket) || 0) + newCumulP);
+        pmf.set(bracket, (pmf.get(bracket) ?? 0) + newCumulP);
       }
       return;
     }
@@ -147,29 +134,76 @@ function makePDMonth() {
       if (newCumulP < materialityThreshold) break;
     }
   }
-}
 
-function tailPCache() {
-  const cache = new Map();
-
-  return function (prizesWon) {
-    let tailP = cache.get(prizesWon);
+  // tailP returns probability of all remaining user bonds not winning
+  function lookupTailP(prizesWon) {
+    let tailP = tailCache.get(prizesWon);
     if (!tailP) {
       tailP = calculateTailP(prizesWon);
-      cache.set(prizesWon, tailP);
+      tailCache.set(prizesWon, tailP);
     }
     return tailP;
-  };
-}
-
-function calculateTailP(prizesWon) {
-  const userRemBonds = user.bonds - prizesWon;
-  const nsiRemBonds = nsi.bonds - prizesWon;
-  let p = 1;
-  for (let i = 0; i < userRemBonds; i++) {
-    p *= (nsi.noWinBonds - i) / (nsiRemBonds - i);
   }
-  return p;
+
+  function calculateTailP(prizesWon) {
+    const userRemBonds = user.bonds - prizesWon;
+    const nsiRemBonds = nsi.bonds - prizesWon;
+    let p = 1;
+    for (let i = 0; i < userRemBonds; i++) {
+      p *= (nsi.noWinBonds - i) / (nsiRemBonds - i);
+    }
+    return p;
+  }
 }
 
+function* generatePeriodPMFs(arrayPMFs) {
+  arrayPMFs[0] = makeMonthPMF();
 
+  yield 0;
+
+  const t = [0, ...user.periods];
+  for (let i = 1; i < t.length; i++) {
+    arrayPMFs[i] = new Map([[0, 1]]);
+  }
+  let pdExp = arrayPMFs[0];
+
+  while (t.some((e) => e !== 0)) {
+    for (let i = 1; i < t.length; i++) {
+      if (t[i] === 0) continue;
+      if ((t[i] & 1) !== 0) arrayPMFs[i] = combine(arrayPMFs[i], pdExp);
+      t[i] >>= 1;
+      if (t[i] === 0) yield i;
+    }
+    pdExp = combineSelf(pdExp);
+  }
+
+  function combine(pdA, pdB) {
+    const pdC = new Map([[0, 0]]);
+    for (const [prizeA, probA] of pdA.entries()) {
+      for (const [prizeB, probB] of pdB.entries()) {
+        const probC = probA * probB;
+        if (probC > materialityThreshold) {
+          const prizeC = bracketCap(prizeA + prizeB);
+          pdC.set(prizeC, (pdC.get(prizeC) || 0) + probC);
+        }
+      }
+    }
+    return pdC;
+  }
+
+  function combineSelf(pdA) {
+    const pdC = new Map();
+    for (const [prizeA, probA] of pdA.entries()) {
+      for (const [prizeB, probB] of pdA.entries()) {
+        if (prizeA < prizeB) continue;
+        const probC = probA * probB;
+        if (probC > materialityThreshold) {
+          const prizeC = bracketCap(prizeA + prizeB);
+          const factor = prizeA === prizeB ? 1 : 2;
+          pdC.set(prizeC, (pdC.get(prizeC) || 0) + factor * probC);
+        }
+      }
+    }
+    return pdC;
+  }
+}

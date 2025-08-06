@@ -1,4 +1,4 @@
-generateTable();
+generateAnalysisTable();
 
 const holdingInput = document.querySelector("#holding");
 const calculateButton = document.querySelector("#calculate");
@@ -17,7 +17,7 @@ calculateButton.addEventListener("click", () => {
     user.bonds = number;
     holdingInput.value = "";
     statementText.innerText = "Calculating...";
-    generateTable();
+    generateAnalysisTable();
   });
 });
 
@@ -35,7 +35,6 @@ function ifValidHoldingInput(yesFun, noFun) {
   }
 }
 
-
 const updateButton = document.querySelector("#updateButton");
 const cancelButton = document.querySelector("#cancelButton");
 const submitButton = document.querySelector("#submitButton");
@@ -46,11 +45,13 @@ const numberPrizesInput = document.querySelector("#numberPrizes");
 const prizeFundInput = document.querySelector("#prizeFund");
 const oddsInput = document.querySelector("#odds");
 
-let nsiTemp;
+let nsiTemp, prizeTable;
 
 updateButton.addEventListener("click", () => {
-  makePrizedrawTableTemplate();
-  addColumnPrizedrawTable(nsi);
+  prizeTable = initPrizeTable();
+  prizeTable.addData(nsi);
+  // makePrizedrawTableTemplate();
+  // addColumnPrizedrawTable(nsi);
   oddsInput.placeholder = nsi.odds;
   numberPrizesInput.placeholder = nsi.totalPrizes;
   prizeFundInput.placeholder = nsi.totalPrizeValue;
@@ -64,8 +65,8 @@ submitButton.addEventListener("click", (event) => {
   dialog.close();
   nsi = nsiTemp;
   statementText.innerText = "Calculating...";
-  generateTable();
-  updateText.innerText = "Based on user input prize draw data"
+  generateAnalysisTable();
+  updateText.innerText = "Based on user input prize draw data";
 });
 
 cancelButton.addEventListener("click", () => {
@@ -83,15 +84,19 @@ function actionPrizedrawInputs() {
     prizeFundInput.checkValidity() &&
     oddsInput.checkValidity()
   ) {
-    nsiTemp = setupNSIdata(numberPrizesInput.value, prizeFundInput.value, oddsInput.value);
+    nsiTemp = setupNSIdata(
+      numberPrizesInput.value,
+      prizeFundInput.value,
+      oddsInput.value
+    );
     if (nsiTemp.prizes.every((p) => p.number >= 2)) {
       submitButton.classList.add("primed");
-      addColumnPrizedrawTable(nsiTemp);
+      prizeTable.addData(nsiTemp);
+      // addColumnPrizedrawTable(nsiTemp);
       return;
     }
   }
   submitButton.classList.remove("primed");
-  clearColumnPrizedrawTable();
+  prizeTable.clearData();
+  // clearColumnPrizedrawTable();
 }
-
-
