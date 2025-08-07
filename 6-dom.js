@@ -1,48 +1,41 @@
+// DOM manipulation and kick off
+
 generateAnalysisTable();
 
+// for changes in premium bond holdings
+
 const holdingInput = document.querySelector("#holding");
-const calculateButton = document.querySelector("#calculate");
+const calculateButton = document.querySelector("#calculate-button");
 const statementText = document.querySelector("#statement");
 
 holdingInput.addEventListener("input", () => {
-  ifValidHoldingInput(
-    () => calculateButton.classList.add("primed"),
-    () => calculateButton.classList.remove("primed")
-  );
+  const n = Number(holdingInput.value);
+  if (n >= 25 && n <= 50000 && n === Math.floor(n) && n !== user.bonds) {
+    calculateButton.classList.add("primed");
+  } else {
+    calculateButton.classList.remove("primed");
+  }
 });
 
 calculateButton.addEventListener("click", () => {
-  ifValidHoldingInput((number) => {
-    calculateButton.classList.remove("primed");
-    user.bonds = number;
-    holdingInput.value = "";
-    statementText.innerText = "Calculating...";
-    generateAnalysisTable();
-  });
+  user.bonds = Number(holdingInput.value);
+  statementText.innerText = "Calculating...";
+  generateAnalysisTable();
+  holdingInput.value = "";
+  holdingInput.placeholder = user.bonds;
+  calculateButton.classList.remove("primed");
 });
 
-function ifValidHoldingInput(yesFun, noFun) {
-  const number = Number(holdingInput.value);
-  if (
-    number >= 25 &&
-    number <= 50000 &&
-    number === Math.floor(number) &&
-    number !== user.bonds
-  ) {
-    yesFun(number);
-  } else if (noFun) {
-    noFun(number);
-  }
-}
+// for changes in underlying prize draw
 
-const updateButton = document.querySelector("#updateButton");
-const cancelButton = document.querySelector("#cancelButton");
-const submitButton = document.querySelector("#submitButton");
+const updateButton = document.querySelector("#update-button");
+const cancelButton = document.querySelector("#cancel-button");
+const submitButton = document.querySelector("#submit-button");
 
 const updateText = document.querySelector("#update-text");
 const dialog = document.querySelector("#prizedraw");
-const numberPrizesInput = document.querySelector("#numberPrizes");
-const prizeFundInput = document.querySelector("#prizeFund");
+const numberPrizesInput = document.querySelector("#number-prizes");
+const prizeFundInput = document.querySelector("#prize-fund");
 const oddsInput = document.querySelector("#odds");
 
 let nsiTemp, prizeTable;
@@ -50,8 +43,6 @@ let nsiTemp, prizeTable;
 updateButton.addEventListener("click", () => {
   prizeTable = initPrizeTable();
   prizeTable.addData(nsi);
-  // makePrizedrawTableTemplate();
-  // addColumnPrizedrawTable(nsi);
   oddsInput.placeholder = nsi.odds;
   numberPrizesInput.placeholder = nsi.totalPrizes;
   prizeFundInput.placeholder = nsi.totalPrizeValue;
@@ -59,14 +50,14 @@ updateButton.addEventListener("click", () => {
 });
 
 submitButton.addEventListener("click", (event) => {
-  setupNSIdata(numberPrizesInput.value, prizeFundInput.value, oddsInput.value);
-  event.preventDefault();
-  document.getElementById("new-prizedraw").reset();
   dialog.close();
-  nsi = nsiTemp;
   statementText.innerText = "Calculating...";
+  nsi = nsiTemp;
   generateAnalysisTable();
+  submitButton.classList.remove("primed");
+  document.getElementById("new-prizedraw").reset();
   updateText.innerText = "Based on user input prize draw data";
+  event.preventDefault();
 });
 
 cancelButton.addEventListener("click", () => {
@@ -92,11 +83,9 @@ function actionPrizedrawInputs() {
     if (nsiTemp.prizes.every((p) => p.number >= 2)) {
       submitButton.classList.add("primed");
       prizeTable.addData(nsiTemp);
-      // addColumnPrizedrawTable(nsiTemp);
       return;
     }
   }
   submitButton.classList.remove("primed");
   prizeTable.clearData();
-  // clearColumnPrizedrawTable();
 }

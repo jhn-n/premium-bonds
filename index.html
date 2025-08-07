@@ -6,18 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Premium Bonds</title>
     <link rel="stylesheet" href="style.css">
-    <script src="data.js" defer></script>
-    <script src="calcs.js" defer></script>
-    <script src="tables.js" defer></script>
-    <script src="script-dom.js" defer></script>
+    <script src="1-data.js" defer></script>
+    <script src="2-pmf-calcs.js" defer></script>
+    <script src="3-cdf-calcs.js" defer></script>
+    <script src="4-main-table.js" defer></script>
+    <script src="5-prizedraw-table.js" defer></script>
+    <script src="6-dom.js" defer></script>
 
 </head>
 
 <body>
     <div class="inputs">
         <label for="holding">Number of premium bonds held (25 - 50,000):</label>
-        <input type="number" id="holding" min="25" max="50000" placeholder="1000" />
-        <button id="calculate">Calculate</button>
+        <input type="number" id="holding" min="25" max="50000" placeholder="25" />
+        <button id="calculate-button">CALCULATE</button>
     </div>
 
     <div id="statement">Calculating...
@@ -28,12 +30,13 @@
 
     <div class="inputs">
         <span id="update-text"></span>
-        <button id="updateButton">update</button>
+        <button id="update-button">UPDATE</button>
     </div>
+
     <div>
         <dialog id="prizedraw">
             <form action="https://httpbin.org/post" method="post" id="new-prizedraw">
-                <button type="button" id="cancelButton">X</button>
+                <button type="button" id="cancel-button">X</button>
                 <div>
                     <label for="odds">
                         <a href="https://www.nsandi.com/products/premium-bonds" target="_blank">
@@ -51,7 +54,7 @@
                             Total prizes
                         </a>
                     </label>
-                    <input type="number" id="numberPrizes" min="500000" , max="50000000" , required />
+                    <input type="number" id="number-prizes" min="500000" , max="50000000" , required />
                 </div>
                 <div>
                     <label for="prizeFund">
@@ -59,11 +62,11 @@
                             Total value of prizes
                         </a>
                     </label>
-                    <input type="number" id="prizeFund" min="50000000" max="5000000000" required/>
+                    <input type="number" id="prize-fund" min="50000000" max="5000000000" required />
                 </div>
                 <div>
                     <span> </span>
-                    <button type="submit" id="submitButton">Submit</button>
+                    <button type="submit" id="submit-button">Submit</button>
                 </div>
             </form>
             <div id="prizes-container">

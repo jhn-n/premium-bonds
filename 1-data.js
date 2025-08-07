@@ -1,3 +1,6 @@
+// initial user data and nsi data processing
+// note any change in nsi methodology will require updates here
+
 class Prize {
   constructor(value, number) {
     this.value = value;
@@ -5,31 +8,33 @@ class Prize {
   }
 }
 
-// PREMIUM BOND DATA
+// premium bond data (from NSI)
 let nsi = setupNSIdata(6_009_717, 396_641_075, 22_000);
 document.querySelector("#update-text").innerText =
   "Based on August 2025 prize draw";
 
-// USER DATA
+// user data
 const user = {
-  bonds: 1000,
+  bonds: 25,
   periods: [3, 6, 12, 24, 60],
   brackets: [
     25, 50, 75, 100, 200, 500, 1_000, 2_000, 5_000, 10_000, 25_000, 50_000,
     100_000, 1_000_000,
   ],
   percentiles: [99, 95, 75, 50, 25, 5, 1],
-  // percentileDescriptions: [
-  //   "V. high",
-  //   "High",
-  //   "Lucky",
-  //   "Average",
-  //   "Unlucky",
-  //   "Low",
-  //   "V. low",
-  // ],
+  percentileDescriptions: [
+    "- very lucky",
+    "",
+    "",
+    "- average luck",
+    "",
+    "",
+    "- very unlucky",
+  ],
 };
 
+// to calculated prize numbers for each band (nsi methodology)
+// as well as some other stats
 function setupNSIdata(totalPrizes, totalPrizeValue, odds) {
   const prizes = [];
 

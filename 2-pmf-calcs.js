@@ -1,3 +1,7 @@
+// probability mass function for winnings based on holding
+
+// technical parameters:
+
 // need to discard prize combinations with immaterial probabilities
 // 1e-15 appears to be past the level where no further impact is observed
 const materialityThreshold = 1e-15;
@@ -8,7 +12,9 @@ const materialityThreshold = 1e-15;
 // 1 - as 0 but lump any winnings over £1m together (safe if "at least £1m" is top bracket)
 // 2 - as 1 but also lump any £100k <= x < £1m together at £100k. Use this if:
 //     a) we have no use for any intermediate bands between £100k and £1m AND
-//     b) probability of reaching £1m bracket without £1m prize is immaterial
+//     b) probability of reaching £1m bracket without winning £1m prize is immaterial
+//        (appears to be <0.1% impact so probably worth the trade off for speed
+//         justifies rounding to 3.s.f.)
 const bracketCapType = 2;
 
 const bracketCap = (function () {
@@ -24,72 +30,6 @@ const bracketCap = (function () {
   }
 })();
 
-class CDF {
-  constructor(pmf) {
-    this.cdf = new Map();
-    this.cdf.set(0, pmf.get(0) ?? 0);
-    const topPrize = user.brackets.at(-1);
-    const secPrize = user.brackets.at(-2);
-
-    switch (bracketCapType) {
-      case 0:
-        const highestKey = Math.max(...pmf.keys());
-        for (let v = 25; v <= highestKey; v += 25) {
-          this.cdf.set(v, this.F(v - 25) + (pmf.get(v) ?? 0));
-        }
-        break;
-      case 1:
-        for (let v = 25; v <= topPrize; v += 25) {
-          this.cdf.set(v, this.F(v - 25) + (pmf.get(v) ?? 0));
-        }
-        break;
-      case 2:
-        for (let v = 25; v <= secPrize; v += 25) {
-          this.cdf.set(v, this.F(v - 25) + (pmf.get(v) ?? 0));
-        }
-        this.cdf.set(topPrize, this.F(secPrize) + (pmf.get(topPrize) ?? 0));
-        break;
-    }
-  }
-
-  F(x) {
-    return this.cdf.get(x) ?? NaN;
-  }
-
-  probAtLeast(x) {
-    if (x === 0) return 1;
-    if (bracketCapType === 2 && x === user.brackets.at(-1)) {
-      return 1 - (this.F(user.brackets.at(-2)) ?? 0);
-    }
-    return 1 - (this.F(x - 25) ?? 0);
-  }
-
-  getPercentile(percentile) {
-    const percentage = percentile / 100;
-    if (this.cdf.get(0) >= percentage) return 0;
-
-    const bracketCap = user.brackets.at(-2);
-    if (this.cdf.get(bracketCap) < percentage) {
-      console.error("Using too high percentiles for banding type 2");
-    }
-
-    // binary search for lowest x with F(x) >= target
-    // this is where the percentile lies (represented by high)
-    let low = 0;
-    let high = bracketCap;
-    while (high - low > 25) {
-      const mid = 25 * Math.round((high + low) / 50);
-      if (this.cdf.get(mid) >= percentage) {
-        high = mid;
-      } else {
-        low = mid;
-      }
-    }
-    return high;
-  }
-}
-
-// returns full probability distribution for a holding of n over one month
 function makeMonthPMF() {
   const pmf = new Map();
   const tailCache = new Map();
@@ -156,9 +96,10 @@ function makeMonthPMF() {
   }
 }
 
+// generator of PMFs over all required time periods
+// yields the array index of the next completed PMF
 function* generatePeriodPMFs(arrayPMFs) {
   arrayPMFs[0] = makeMonthPMF();
-
   yield 0;
 
   const t = [0, ...user.periods];
@@ -178,7 +119,7 @@ function* generatePeriodPMFs(arrayPMFs) {
   }
 
   function combine(pdA, pdB) {
-    const pdC = new Map([[0, 0]]);
+    const pdC = new Map();
     for (const [prizeA, probA] of pdA.entries()) {
       for (const [prizeB, probB] of pdB.entries()) {
         const probC = probA * probB;

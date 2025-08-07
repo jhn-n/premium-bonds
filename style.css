@@ -1,41 +1,95 @@
-
 html {
   font-family: sans-serif;
 }
 
 .inputs {
-  margin: 1rem;
+  margin: 1.1rem;
 }
 
-.inputs #updateButton {
-  margin-left: 2rem;
+input {
+  font-size: 1rem;
 }
+
+button {
+  border: none;
+  border-radius: 0.5rem;
+  background-color: rgba(248, 81, 81, 0.205);
+  padding: 0.5rem 0.8rem;
+  font-size: 0.9rem;
+}
+
+button:hover {
+  background-color: rgba(248, 81, 81, 0.452);
+}
+
+/* styling for elements surrounding table */
+
+#calculate-button {
+  margin-left: 2rem;
+  visibility: hidden;
+}
+
+#calculate-button.primed {
+  visibility: visible;
+}
+
 #statement {
   margin: 1rem;
   font-size: 1.3rem;
 }
 
-#calculate {
-  visibility: hidden;
-  background-color: rgba(248, 81, 81, 0.452);
+#update-button {
+  margin-left: 2rem;
+  background-color: rgb(208, 222, 226);
 }
 
-#calculate.primed {
+#update-button:hover {
+  background-color: rgb(173, 214, 228);
+}
+
+/* styling for modal prize draw table and data entry */
+
+#prizedraw {
+  position: relative;
+}
+
+#prizedraw > form > div {
+  margin: 5px 0px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+#prizedraw > form > div > * {
+  justify-self: start;
+}
+
+/* for "in 1" */
+#prizedraw span > span {
+  font-size: 0.75rem;
+}
+
+#prizedraw #cancel-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: darkgrey;
+}
+
+#prizedraw #cancel-button:hover {
+  background-color: grey;
+}
+
+#prizedraw #submit-button {
+  visibility: hidden;
+  justify-self: start;
+}
+
+#prizedraw #submit-button.primed {
   visibility: visible;
 }
 
-.active {
-  visibility: hidden;
-}
 
-/* #table-container {
-  transition: transform 2s; 
-}
-
-#table-container:hover {
-  transform: rotate(180deg);
-} */
-
+/* minimal table styling */
 table {
   border-collapse: collapse;
   border: 2px solid rgb(200, 200, 200);
@@ -63,44 +117,4 @@ tr:nth-child(even) td {
 
 tr:nth-child(odd) td {
   background-color: rgb(245, 245, 245);
-}
-
-caption {
-  padding: 10px;
-}
-
-
-
-#prizedraw {
-  position: relative;
-}
-
-#prizedraw > form > div {
-  margin: 5px 0px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-#prizedraw > form > div > * {
-  justify-self: start;
-}
-
-#prizedraw span > span {
-  font-size: 0.75rem;
-}
-
-#prizedraw #cancelButton {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-}
-
-#prizedraw #submitButton {
-  visibility: hidden;
-  justify-self: start;
-  background-color: rgba(248, 81, 81, 0.452);
-}
-
-#prizedraw #submitButton.primed {
-  visibility: visible;
 }
