@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Bonds</title>
+    <title>NS&I Premium Bonds Odds Calculator</title>
     <link rel="stylesheet" href="style.css">
     <script src="1-data.js" defer></script>
     <script src="2-pmf-calcs.js" defer></script>
@@ -16,27 +16,26 @@
 </head>
 
 <body>
-    <div class="inputs">
-        <label for="holding">Number of premium bonds held (25 - 50,000):</label>
-        <input type="number" id="holding" min="25" max="50000" placeholder="25" />
-        <button id="calculate-button">CALCULATE</button>
-    </div>
+    <div id="page-container">
+        <header>
+            <h1>Odds Calculator for NS&I Premium Bonds </h1>
+            <button id="about-button">ABOUT</button>
+        </header>
+        <div class="inputs">
+            <label for="holding">Number of premium bonds held (25 - 50,000):</label>
+            <input type="number" id="holding" min="25" max="50000" placeholder="25" />
+            <button id="calculate-button">CALCULATE</button>
+        </div>
+        <main id="table-container">
+        </main>
+        <div class="inputs">
+            <span id="update-text"></span>
+            <button id="update-button">UPDATE</button>
+        </div>
 
-    <div id="statement">Calculating...
-    </div>
-
-    <div id="table-container">
-    </div>
-
-    <div class="inputs">
-        <span id="update-text"></span>
-        <button id="update-button">UPDATE</button>
-    </div>
-
-    <div>
         <dialog id="prizedraw">
             <form action="https://httpbin.org/post" method="post" id="new-prizedraw">
-                <button type="button" id="cancel-button">X</button>
+                <button type="button" class="cancel-button" id="cancel-update-button">X</button>
                 <div>
                     <label for="odds">
                         <a href="https://www.nsandi.com/products/premium-bonds" target="_blank">
@@ -66,12 +65,25 @@
                 </div>
                 <div>
                     <span> </span>
-                    <button type="submit" id="submit-button">Submit</button>
+                    <button type="submit" id="submit-update-button">Submit</button>
                 </div>
             </form>
+
             <div id="prizes-container">
             </div>
+
         </dialog>
+
+        <dialog id="about">
+            <button type="button" class="cancel-button" id="cancel-about-button">X</button>
+            <p><a href="https://www.nsandi.com/products/premium-bonds">NS&I Premium Bonds</a> are an investment
+                product provided by the UK Government. Instead of earning interest, holders are entered into a
+                monthly prize draw offering prizes between £25 and £1 million.</p>
+            <p>Use this page to understand the odds of winning big over different time periods, 
+                and to investiage more typical winnings for a given holding.
+            </p>
+        </dialog>
+
     </div>
 
 </body>

@@ -44,14 +44,19 @@ function generateAnalysisTable() {
     } else {
       console.timeEnd("PMFs");
       const holding = numberWithCommas(user.bonds);
-      statementText.innerText = `Outcomes with holding of £${holding}`;
     }
   }
 
   function initialiseTable() {
     tableContainer.innerHTML = "";
-    let numDists = 1 + user.periods.length;
+    let numDists = 1 + user.periods.length; // first is 1 month
     const tbl = document.createElement("table");
+
+    const caption = document.createElement("caption");
+    caption.textContent = `Winning odds for £${numberWithCommas(
+      user.bonds
+    )} holding`;
+    tbl.appendChild(caption);
 
     // create column headers
     const tblHeader = document.createElement("thead");
@@ -74,9 +79,9 @@ function generateAnalysisTable() {
 
       switch (i) {
         case mergedRow:
-          const mergedCell = document.createElement("th");
+          const mergedCell = document.createElement("td");
           mergedCell.colSpan = numDists + 1;
-          mergedCell.id = `th${i}-0`;
+          mergedCell.id = "table-subheading";
           mergedCell.textContent = rowHeader(i);
           row.appendChild(mergedCell);
           break;
@@ -145,7 +150,7 @@ function generateAnalysisTable() {
   function columnHeader(column) {
     switch (column) {
       case 0:
-        return "Winning chance";
+        return "Prize Amount";
       case 1:
         return "1 month";
       default:

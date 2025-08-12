@@ -2,6 +2,15 @@
 
 generateAnalysisTable();
 
+// for "about" info
+
+const aboutButton = document.querySelector("#about-button");
+const closeAboutButton = document.querySelector("#cancel-about-button");
+const aboutDialog = document.querySelector("#about");
+
+aboutButton.addEventListener("click", () => aboutDialog.showModal());
+closeAboutButton.addEventListener("click", () => aboutDialog.close());
+
 // for changes in premium bond holdings
 
 const holdingInput = document.querySelector("#holding");
@@ -19,7 +28,6 @@ holdingInput.addEventListener("input", () => {
 
 calculateButton.addEventListener("click", () => {
   user.bonds = Number(holdingInput.value);
-  statementText.innerText = "Calculating...";
   generateAnalysisTable();
   holdingInput.value = "";
   holdingInput.placeholder = user.bonds;
@@ -29,11 +37,11 @@ calculateButton.addEventListener("click", () => {
 // for changes in underlying prize draw
 
 const updateButton = document.querySelector("#update-button");
-const cancelButton = document.querySelector("#cancel-button");
-const submitButton = document.querySelector("#submit-button");
+const cancelUpdateButton = document.querySelector("#cancel-update-button");
+const submitUpdateButton = document.querySelector("#submit-update-button");
 
 const updateText = document.querySelector("#update-text");
-const dialog = document.querySelector("#prizedraw");
+const prizedrawDialog = document.querySelector("#prizedraw");
 const numberPrizesInput = document.querySelector("#number-prizes");
 const prizeFundInput = document.querySelector("#prize-fund");
 const oddsInput = document.querySelector("#odds");
@@ -46,23 +54,22 @@ updateButton.addEventListener("click", () => {
   oddsInput.placeholder = nsi.odds;
   numberPrizesInput.placeholder = nsi.totalPrizes;
   prizeFundInput.placeholder = nsi.totalPrizeValue;
-  dialog.showModal();
+  prizedrawDialog.showModal();
 });
 
-submitButton.addEventListener("click", (event) => {
-  dialog.close();
-  statementText.innerText = "Calculating...";
+submitUpdateButton.addEventListener("click", (event) => {
+  prizedrawDialog.close();
   nsi = nsiTemp;
   generateAnalysisTable();
-  submitButton.classList.remove("primed");
+  submitUpdateButton.classList.remove("primed");
   document.getElementById("new-prizedraw").reset();
   updateText.innerText = "Based on user input prize draw data";
   event.preventDefault();
 });
 
-cancelButton.addEventListener("click", () => {
+cancelUpdateButton.addEventListener("click", () => {
   document.getElementById("new-prizedraw").reset();
-  dialog.close();
+  prizedrawDialog.close();
 });
 
 numberPrizesInput.addEventListener("input", actionPrizedrawInputs);
@@ -81,11 +88,11 @@ function actionPrizedrawInputs() {
       oddsInput.value
     );
     if (nsiTemp.prizes.every((p) => p.number >= 2)) {
-      submitButton.classList.add("primed");
+      submitUpdateButton.classList.add("primed");
       prizeTable.addData(nsiTemp);
       return;
     }
   }
-  submitButton.classList.remove("primed");
+  submitUpdateButton.classList.remove("primed");
   prizeTable.clearData();
 }

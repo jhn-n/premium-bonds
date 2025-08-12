@@ -30,6 +30,8 @@ const bracketCap = (function () {
   }
 })();
 
+// create Probability Mass Function for prizes in monthly draw
+// using fast implementation of multinomial distribution
 function makeMonthPMF() {
   const pmf = new Map();
   const tailCache = new Map();
@@ -96,7 +98,7 @@ function makeMonthPMF() {
   }
 }
 
-// generator of PMFs over all required time periods
+// generator of PMFs over all required time periods using binary exponentiation
 // yields the array index of the next completed PMF
 function* generatePeriodPMFs(arrayPMFs) {
   arrayPMFs[0] = makeMonthPMF();

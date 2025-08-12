@@ -9,7 +9,7 @@ class Prize {
 }
 
 // premium bond data (from NSI)
-let nsi = setupNSIdata(6_009_717, 396_641_075, 22_000);
+let nsi = setupNSIdata(6_005_404, 396_356_500, 22_000);
 document.querySelector("#update-text").innerText =
   "Based on August 2025 prize draw";
 

@@ -1,110 +1,57 @@
 html {
+  --color-l5: #f5f7f3;
+  --color-l5b: #f5f7f37c;
+  --color-l4: #dee6d7;
+  --color-l3: #bccdaf;
+  --color-l2: #9bb487;
+  --color-d4: #36442a;
+  --color-d5: #2d3823;
+  --color-d3: #3f4f31;
+  --color-d2: #485a39;
+  --color-d1: #516640;
+  --color-background: rgb(34, 17, 3);
   font-family: sans-serif;
-}
-
-.inputs {
-  margin: 1.1rem;
-}
-
-input {
-  font-size: 1rem;
-}
-
-button {
-  border: none;
-  border-radius: 0.5rem;
-  background-color: rgba(248, 81, 81, 0.205);
-  padding: 0.5rem 0.8rem;
-  font-size: 0.9rem;
-}
-
-button:hover {
-  background-color: rgba(248, 81, 81, 0.452);
-}
-
-/* styling for elements surrounding table */
-
-#calculate-button {
-  margin-left: 2rem;
-  visibility: hidden;
-}
-
-#calculate-button.primed {
-  visibility: visible;
-}
-
-#statement {
-  margin: 1rem;
-  font-size: 1.3rem;
-}
-
-#update-button {
-  margin-left: 2rem;
-  background-color: rgb(208, 222, 226);
-}
-
-#update-button:hover {
-  background-color: rgb(173, 214, 228);
-}
-
-/* styling for modal prize draw table and data entry */
-
-#prizedraw {
-  position: relative;
-}
-
-#prizedraw > form > div {
-  margin: 5px 0px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  place-content: center;
+  background-color: var(--color-background);
 }
 
-#prizedraw > form > div > * {
-  justify-self: start;
+#page-container {
+  border: 5px var(--color-l2) ridge;
+  width: fit-content;
+  padding: 1rem;
+  background-color: var(--color-l4);
 }
 
-/* for "in 1" */
-#prizedraw span > span {
-  font-size: 0.75rem;
-}
+/* table styling */
 
-#prizedraw #cancel-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background-color: darkgrey;
-}
-
-#prizedraw #cancel-button:hover {
-  background-color: grey;
-}
-
-#prizedraw #submit-button {
-  visibility: hidden;
-  justify-self: start;
-}
-
-#prizedraw #submit-button.primed {
-  visibility: visible;
-}
-
-
-/* minimal table styling */
 table {
   border-collapse: collapse;
-  border: 2px solid rgb(200, 200, 200);
   letter-spacing: 1px;
   font-size: 0.8rem;
 }
 
-td,
-th {
-  border: 1px solid rgb(190, 190, 190);
-  padding: 10px 20px;
+caption,
+#table-subheading {
+  margin: 0.5rem 1.25rem;
+  font-size: 1.3rem;
+  text-align: left;
+}
+
+#table-subheading {
+  background-color: var(--color-l4);
+  border: none;
+}
+
+td {
+  padding: 0.4rem 0.8rem;
 }
 
 th {
-  background-color: rgb(235, 235, 235);
+  background-color: var(--color-d4);
+  color: white;
+  font-weight: normal;
+  padding: 0.4rem 1rem;
 }
 
 td {
@@ -112,9 +59,87 @@ td {
 }
 
 tr:nth-child(even) td {
-  background-color: rgb(250, 250, 250);
+  background-color: var(--color-l5);
 }
 
 tr:nth-child(odd) td {
-  background-color: rgb(245, 245, 245);
+  background-color: var(--color-l5b);
+}
+
+/* styling for other non-dialog elements */
+
+header {
+  display: flex;
+  align-items: center;
+}
+.inputs {
+  margin: 1.1rem 0;
+}
+
+input {
+  font-size: 1rem;
+}
+
+button {
+  margin-left: 2rem;  
+  border: none;
+  border-radius: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  background-color: var(--color-d1);
+  color: white;
+  font-size: 0.8rem;
+  transition: transform 0.2s;
+}
+
+button:hover {
+  transform: scale(1.15);
+}
+
+#calculate-button {
+  visibility: hidden;
+}
+
+#calculate-button.primed {
+  visibility: visible;
+}
+
+
+/* styling for dialogs including update with prize draw table and data entry */
+
+dialog {
+  margin-top: 10rem;
+  background-color: var(--color-l4);
+  max-width: 50rem;
+  position: absolute;
+}
+
+form > div {
+  margin: 5px 0px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+form > div > * {
+  justify-self: start;
+}
+
+/* for "in 1" */
+form span span {
+  font-size: 0.75rem;
+}
+
+#submit-update-button {
+  visibility: hidden;
+  justify-self: start;
+  margin-left: 0;
+}
+
+#submit-update-button.primed {
+  visibility: visible;
+}
+
+.cancel-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
 }
