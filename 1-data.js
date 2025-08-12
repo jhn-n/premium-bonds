@@ -8,7 +8,7 @@ class Prize {
   }
 }
 
-// premium bond data (from NSI)
+// premium bond data (from NSI) - TO UPDATE!!
 let nsi = setupNSIdata(6_005_404, 396_356_500, 22_000);
 document.querySelector("#update-text").innerText =
   "Based on August 2025 prize draw";
@@ -33,7 +33,7 @@ const user = {
   ],
 };
 
-// to calculated prize numbers for each band (nsi methodology)
+// calculated prize numbers for each band (nsi described methodology)
 // as well as some other stats
 function setupNSIdata(totalPrizes, totalPrizeValue, odds) {
   const prizes = [];

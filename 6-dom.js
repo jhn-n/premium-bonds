@@ -1,4 +1,4 @@
-// DOM manipulation and kick off
+// kick off and DOM manipulation
 
 generateAnalysisTable();
 
@@ -10,6 +10,7 @@ const aboutDialog = document.querySelector("#about");
 
 aboutButton.addEventListener("click", () => aboutDialog.showModal());
 closeAboutButton.addEventListener("click", () => aboutDialog.close());
+
 
 // for changes in premium bond holdings
 
@@ -33,6 +34,7 @@ calculateButton.addEventListener("click", () => {
   holdingInput.placeholder = user.bonds;
   calculateButton.classList.remove("primed");
 });
+
 
 // for changes in underlying prize draw
 

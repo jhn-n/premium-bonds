@@ -116,14 +116,14 @@ dialog {
 form > div {
   margin: 5px 0px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 4fr 4fr 1fr;
 }
 
 form > div > * {
   justify-self: start;
 }
 
-/* for "in 1" */
+/* for "in 1" of Odds input */
 form span span {
   font-size: 0.75rem;
 }

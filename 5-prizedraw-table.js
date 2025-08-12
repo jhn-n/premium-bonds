@@ -96,14 +96,3 @@ function initPrizeTable() {
   };
 }
 
-function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-function numberRound(x, dp) {
-  return Number.parseFloat(x).toFixed(dp);
-}
-
-function percent(x, dp) {
-  return `${numberRound(100 * x, dp)}%`;
-}
