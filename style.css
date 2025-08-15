@@ -11,13 +11,12 @@ html {
   --color-d1: #516640;
   --color-background: rgb(34, 17, 3);
   font-family: sans-serif;
-  display: grid;
-  place-content: center;
   background-color: var(--color-background);
 }
 
 #page-container {
   border: 5px var(--color-l2) ridge;
+  margin: auto;
   width: fit-content;
   padding: 1rem;
   background-color: var(--color-l4);
